@@ -209,7 +209,7 @@ impl Widget<EditorState> for Editor {
         use druid::piet::{Color, RenderContext};
         let rect =
             Rect::ZERO.with_size((CANVAS_SIZE.to_vec2() * data.session.viewport.zoom).to_size());
-        ctx.fill(rect, &Color::WHITE);
+        ctx.fill(rect, &Color::BLACK);
 
         draw::draw_session(
             ctx,

@@ -26,9 +26,9 @@ pub fn configure_env(env: &mut Env) {
     env.set(SIDEBAR_EDGE_STROKE, colors::SIDEBAR_EDGE);
     env.set(PLACEHOLDER_GLYPH_COLOR, colors::LIGHT_GREY);
     env.set(GLYPH_LIST_STROKE, colors::LIGHT_GREY);
-    env.set(GLYPH_LIST_BACKGROUND, Color::WHITE);
+    env.set(GLYPH_LIST_BACKGROUND, Color::BLACK);
     env.set(GLYPH_LIST_LABEL_TEXT_SIZE, 12.0);
-    env.set(GLYPH_COLOR, Color::BLACK);
+    env.set(GLYPH_COLOR, Color::WHITE);
     env.set(druid::theme::SELECTION_COLOR, colors::HIGHLIGHT_COLOR);
     env.set(druid::theme::LABEL_COLOR, Color::BLACK);
     env.set(druid::theme::WINDOW_BACKGROUND_COLOR, Color::WHITE);

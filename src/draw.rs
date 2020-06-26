@@ -15,21 +15,21 @@ use druid::PaintCtx;
 
 use norad::Glyph;
 
-const PATH_COLOR: Color = Color::rgb8(0x00, 0x00, 0x00);
+const PATH_COLOR: Color = Color::rgb8(0xff, 0xff, 0xff);
 const METRICS_COLOR: Color = Color::rgb8(0xA0, 0xA0, 0xA0);
 const GUIDE_COLOR: Color = Color::rgb8(0xFC, 0x54, 0x93);
 const SELECTED_GUIDE_COLOR: Color = Color::rgb8(0xFE, 0xED, 0xED);
-const SMOOTH_POINT_COLOR: Color = Color::rgb8(0x_41, 0x8E, 0x22);
-const CORNER_POINT_COLOR: Color = Color::rgb8(0x0b, 0x2b, 0xdb);
-const OFF_CURVE_POINT_COLOR: Color = Color::rgb8(0xbb, 0xbb, 0xbb);
-const OFF_CURVE_HANDLE_COLOR: Color = Color::rgb8(0xbb, 0xbb, 0xbb);
+const SMOOTH_POINT_COLOR: Color = Color::rgb8(0x22, 0xff, 0x66);
+const CORNER_POINT_COLOR: Color = Color::rgb8(0xff, 0xaa, 0x22);
+const OFF_CURVE_POINT_COLOR: Color = Color::rgb8(0xcc, 0x22, 0xff);
+const OFF_CURVE_HANDLE_COLOR: Color = Color::rgb8(0xff, 0xff, 0xff);
 const DIRECTION_ARROW_COLOR: Color = Color::rgba8(0x00, 0x00, 0x00, 0x44);
-const COMPONENT_FILL_COLOR: Color = Color::rgba8(0, 0, 0, 0x44);
+const COMPONENT_FILL_COLOR: Color = Color::rgba8(0xff, 0xff, 0xff, 0x44);
 
-const SMOOTH_RADIUS: f64 = 3.5;
-const SMOOTH_SELECTED_RADIUS: f64 = 4.;
-const OFF_CURVE_RADIUS: f64 = 2.;
-const OFF_CURVE_SELECTED_RADIUS: f64 = 2.5;
+const SMOOTH_RADIUS: f64 = 8.;
+const SMOOTH_SELECTED_RADIUS: f64 = 14.;
+const OFF_CURVE_RADIUS: f64 = 8.;
+const OFF_CURVE_SELECTED_RADIUS: f64 = 14.;
 
 /// A context for drawing that maps between screen space and design space.
 struct DrawCtx<'a, 'b: 'a> {
@@ -171,7 +171,7 @@ impl<'a, 'b: 'a> DrawCtx<'a, 'b> {
 
     fn draw_path(&mut self, bez: &BezPath) {
         let path_brush = self.solid_brush(PATH_COLOR);
-        self.stroke(bez, &path_brush, 1.0);
+        self.stroke(bez, &path_brush, 2.0);
     }
 
     fn draw_filled(&mut self, session: &EditSession, font: &Workspace) {
@@ -179,7 +179,7 @@ impl<'a, 'b: 'a> DrawCtx<'a, 'b> {
         self.fill(bez, &Color::BLACK);
 
         for comp in session.components.iter() {
-            self.draw_component(comp, font, Color::BLACK);
+            self.draw_component(comp, font, Color::WHITE);
         }
     }
 
@@ -210,7 +210,7 @@ impl<'a, 'b: 'a> DrawCtx<'a, 'b> {
 
     fn draw_control_handle(&mut self, p1: Point, p2: Point) {
         let l = Line::new(p1, p2);
-        self.stroke(l, &OFF_CURVE_HANDLE_COLOR, 1.0);
+        self.stroke(l, &OFF_CURVE_HANDLE_COLOR, 2.0);
     }
 
     fn draw_point(&mut self, point: PointStyle) {
@@ -248,7 +248,7 @@ impl<'a, 'b: 'a> DrawCtx<'a, 'b> {
         if selected {
             self.fill(circ, &SMOOTH_POINT_COLOR);
         } else {
-            self.stroke(circ, &SMOOTH_POINT_COLOR, 1.0);
+            self.stroke(circ, &SMOOTH_POINT_COLOR, 2.0);
         }
     }
 
@@ -262,7 +262,7 @@ impl<'a, 'b: 'a> DrawCtx<'a, 'b> {
         if selected {
             self.fill(rect, &CORNER_POINT_COLOR);
         } else {
-            self.stroke(rect, &CORNER_POINT_COLOR, 1.0);
+            self.stroke(rect, &CORNER_POINT_COLOR, 2.0);
         }
     }
 
@@ -276,7 +276,7 @@ impl<'a, 'b: 'a> DrawCtx<'a, 'b> {
         if selected {
             self.fill(circ, &OFF_CURVE_POINT_COLOR);
         } else {
-            self.stroke(circ, &OFF_CURVE_POINT_COLOR, 1.0);
+            self.stroke(circ, &OFF_CURVE_POINT_COLOR, 2.0);
         }
     }
 
