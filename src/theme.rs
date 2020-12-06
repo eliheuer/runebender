@@ -54,5 +54,5 @@ pub fn configure_env(env: &mut Env) {
     env.set(druid::theme::CURSOR_COLOR, Color::BLACK);
     env.set(druid::theme::BUTTON_DARK, Color::grey8(200));
     env.set(druid::theme::BUTTON_LIGHT, Color::WHITE);
-    env.set(UI_DETAIL_FONT, FontDescriptor::default().with_size(12.0));
+    env.set(UI_DETAIL_FONT, FontDescriptor::default().with_size(14.0));
 }

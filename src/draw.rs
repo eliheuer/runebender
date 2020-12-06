@@ -19,19 +19,29 @@ use norad::Glyph;
 const PATH_COLOR: Color = Color::rgb8(0x00, 0x00, 0x00);
 const METRICS_COLOR: Color = Color::rgb8(0xA0, 0xA0, 0xA0);
 const GUIDE_COLOR: Color = Color::rgb8(0xFC, 0x54, 0x93);
+
 const SELECTED_GUIDE_COLOR: Color = Color::rgb8(0xFE, 0xCD, 0xCD);
 const SELECTED_LINE_SEGMENT_COLOR: Color = Color::rgb8(0x93, 0xc6, 0xf4);
-const SMOOTH_POINT_COLOR: Color = Color::rgb8(0x_41, 0x8E, 0x22);
-const CORNER_POINT_COLOR: Color = Color::rgb8(0x0b, 0x2b, 0xdb);
-const OFF_CURVE_POINT_COLOR: Color = Color::rgb8(0xbb, 0xbb, 0xbb);
-const OFF_CURVE_HANDLE_COLOR: Color = Color::rgb8(0xbb, 0xbb, 0xbb);
+const SELECTED_POINT_COLOR_ALT: Color = Color::rgb8(0xff, 0xee, 0x55);
+const SELECTED_POINT_COLOR: Color = Color::rgb8(0xff, 0xaa, 0x11);
+
+const SMOOTH_POINT_COLOR: Color = Color::rgb8(0x44, 0x28, 0xEC);
+const SMOOTH_POINT_COLOR_ALT: Color = Color::rgb8(0x57, 0x9A, 0xFF);
+
+const CORNER_POINT_COLOR: Color = Color::rgb8(0x20, 0x8E, 0x53);
+const CORNER_POINT_COLOR_ALT: Color = Color::rgb8(0x6A, 0xE7, 0x56);
+
+const OFF_CURVE_POINT_COLOR: Color = Color::rgb8(0xB9, 0x28, 0xEC);
+const OFF_CURVE_POINT_COLOR_ALT: Color = Color::rgb8(0xFF, 0x57, 0xEE);
+const OFF_CURVE_HANDLE_COLOR: Color = Color::rgb8(0x7E, 0x28, 0xEC);
+
 const DIRECTION_ARROW_COLOR: Color = Color::rgba8(0x00, 0x00, 0x00, 0x44);
 const COMPONENT_FILL_COLOR: Color = Color::rgba8(0, 0, 0, 0x44);
 
-const SMOOTH_RADIUS: f64 = 3.5;
-const SMOOTH_SELECTED_RADIUS: f64 = 4.;
-const OFF_CURVE_RADIUS: f64 = 2.;
-const OFF_CURVE_SELECTED_RADIUS: f64 = 2.5;
+const SMOOTH_RADIUS: f64 = 6.0;
+const SMOOTH_SELECTED_RADIUS: f64 = 8.0;
+const OFF_CURVE_RADIUS: f64 = 6.0;
+const OFF_CURVE_SELECTED_RADIUS: f64 = 8.0;
 
 /// A context for drawing that maps between screen space and design space.
 struct DrawCtx<'a, 'b: 'a> {
@@ -77,10 +87,10 @@ impl<'a, 'b: 'a> DrawCtx<'a, 'b> {
         let bounds = Rect::from_points((0., descender), (hadvance, ascender));
         let bounds = self.space.rect_to_screen(bounds);
 
-        self.stroke(bounds, &METRICS_COLOR, 1.0);
+        self.stroke(bounds, &METRICS_COLOR, 2.0);
         let baseline = Line::new((0.0, 0.0), (hadvance, 0.0));
         let baseline = self.space.affine() * baseline;
-        self.stroke(baseline, &METRICS_COLOR, 1.0);
+        self.stroke(baseline, &METRICS_COLOR, 2.0);
     }
 
     fn draw_grid(&mut self) {
@@ -135,9 +145,9 @@ impl<'a, 'b: 'a> DrawCtx<'a, 'b> {
             //if intersects(line, bounds) {
             //eprintln!("drawing {:?}", line);
             if sels.contains(&guide.id) {
-                self.stroke(line, &sel_brush, 8.0);
+                self.stroke(line, &sel_brush, 4.0);
             }
-            self.stroke(line, &brush, 0.5);
+            self.stroke(line, &brush, 2.0);
             //} else {
             //eprintln!("skipping {:?}", guide);
             //}
@@ -177,13 +187,13 @@ impl<'a, 'b: 'a> DrawCtx<'a, 'b> {
         //of whether a path contained *any* selected points, and short-circuit.
         for segment in path.segments_for_points(sels) {
             let seg = self.space.affine() * segment.to_kurbo();
-            self.stroke(&seg, &SELECTED_LINE_SEGMENT_COLOR, 3.0);
+            self.stroke(&seg, &SELECTED_LINE_SEGMENT_COLOR, 2.0);
         }
     }
 
     fn draw_path(&mut self, bez: &BezPath) {
         let path_brush = self.solid_brush(PATH_COLOR);
-        self.stroke(bez, &path_brush, 1.0);
+        self.stroke(bez, &path_brush, 2.0);
     }
 
     fn draw_filled(&mut self, session: &EditSession, font: &Workspace) {
@@ -221,7 +231,7 @@ impl<'a, 'b: 'a> DrawCtx<'a, 'b> {
 
     fn draw_control_handle(&mut self, p1: Point, p2: Point) {
         let l = Line::new(p1, p2);
-        self.stroke(l, &OFF_CURVE_HANDLE_COLOR, 1.0);
+        self.stroke(l, &OFF_CURVE_HANDLE_COLOR, 2.0);
     }
 
     fn draw_point(&mut self, point: PointStyle) {
@@ -243,9 +253,9 @@ impl<'a, 'b: 'a> DrawCtx<'a, 'b> {
     fn draw_open_path_terminal(&mut self, seg: &kurbo::PathSeg, selected: bool) {
         let cap = cap_line(seg.to_cubic(), 12.);
         if selected {
-            self.stroke(cap, &OFF_CURVE_HANDLE_COLOR, 3.0);
+            self.stroke(cap, &OFF_CURVE_HANDLE_COLOR, 8.0);
         } else {
-            self.stroke(cap, &OFF_CURVE_HANDLE_COLOR, 2.0);
+            self.stroke(cap, &OFF_CURVE_HANDLE_COLOR, 6.0);
         }
     }
 
@@ -257,9 +267,11 @@ impl<'a, 'b: 'a> DrawCtx<'a, 'b> {
         };
         let circ = Circle::new(p, radius);
         if selected {
-            self.fill(circ, &SMOOTH_POINT_COLOR);
+            self.fill(circ, &SELECTED_POINT_COLOR_ALT);
+            self.stroke(circ, &SELECTED_POINT_COLOR, 3.0);
         } else {
-            self.stroke(circ, &SMOOTH_POINT_COLOR, 1.0);
+            self.fill(circ, &SMOOTH_POINT_COLOR_ALT);
+            self.stroke(circ, &SMOOTH_POINT_COLOR, 3.0);
         }
     }
 
@@ -271,9 +283,11 @@ impl<'a, 'b: 'a> DrawCtx<'a, 'b> {
         };
         let rect = Rect::new(p.x - radius, p.y - radius, p.x + radius, p.y + radius);
         if selected {
-            self.fill(rect, &CORNER_POINT_COLOR);
+            self.fill(rect, &SELECTED_POINT_COLOR_ALT);
+            self.stroke(rect, &SELECTED_POINT_COLOR, 3.0);
         } else {
-            self.stroke(rect, &CORNER_POINT_COLOR, 1.0);
+            self.fill(rect, &CORNER_POINT_COLOR_ALT);
+            self.stroke(rect, &CORNER_POINT_COLOR, 3.0);
         }
     }
 
@@ -285,9 +299,11 @@ impl<'a, 'b: 'a> DrawCtx<'a, 'b> {
         };
         let circ = Circle::new(p, radius);
         if selected {
-            self.fill(circ, &OFF_CURVE_POINT_COLOR);
+            self.fill(circ, &SELECTED_POINT_COLOR_ALT);
+            self.stroke(circ, &SELECTED_POINT_COLOR, 3.0);
         } else {
-            self.stroke(circ, &OFF_CURVE_POINT_COLOR, 1.0);
+            self.fill(circ, &OFF_CURVE_POINT_COLOR_ALT);
+            self.stroke(circ, &OFF_CURVE_POINT_COLOR, 3.0);
         }
     }
 

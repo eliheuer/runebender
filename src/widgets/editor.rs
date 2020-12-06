@@ -234,7 +234,7 @@ impl Editor {
 impl Widget<EditorState> for Editor {
     fn paint(&mut self, ctx: &mut PaintCtx, data: &EditorState, env: &Env) {
         let rect = (CANVAS_SIZE * data.session.viewport.zoom).to_rect();
-        ctx.fill(rect, &Color::WHITE);
+        ctx.fill(rect, &Color::grey8(0xCC));
 
         draw::draw_session(
             ctx,
